@@ -1,0 +1,4 @@
+github.com/levenlabs/errctx v0.0.0-20191115155630-49b523d83177 h1:yltlHO5Q9otfXz8atXJ6kSjR9MJ8uVTkrvVwcx8IAUc=
+github.com/levenlabs/errctx v0.0.0-20191115155630-49b523d83177/go.mod h1:vV4IjpzqI4caDxaziJWQLzEzMx5PYMoVIwcYiWuqwEA=
+github.com/levenlabs/go-llog v0.0.0-20191108175717-7bd0bdf8e51e h1:qKebx3udyWIk45P4Y+2HyFkfHLy6wH6boWOL1iz6lcU=
+github.com/levenlabs/go-llog v0.0.0-20191108175717-7bd0bdf8e51e/go.mod h1:q+rEmGJ/6D3aknruHtAIRSXFKv828DveHHT9V++uxZ4=
