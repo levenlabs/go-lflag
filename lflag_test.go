@@ -2,7 +2,7 @@ package lflag
 
 import (
 	"sync"
-	. "testing"
+	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
@@ -10,12 +10,12 @@ import (
 
 // these are used in the cli and env tests
 var testParams = []Param{
-	Param{ParamType: ParamTypeString, Name: "foo"},
-	Param{ParamType: ParamTypeString, Name: "bar", Usage: "wut"},
-	Param{ParamType: ParamTypeString, Name: "baz", Usage: "wut", Default: "wat"},
-	Param{ParamType: ParamTypeBool, Name: "flag1"},
-	Param{ParamType: ParamTypeBool, Name: "flag2"},
-	Param{ParamType: ParamTypeString, Name: "foo-bar"},
+	{ParamType: ParamTypeString, Name: "foo"},
+	{ParamType: ParamTypeString, Name: "bar", Usage: "wut"},
+	{ParamType: ParamTypeString, Name: "baz", Usage: "wut", Default: "wat"},
+	{ParamType: ParamTypeBool, Name: "flag1"},
+	{ParamType: ParamTypeBool, Name: "flag2"},
+	{ParamType: ParamTypeString, Name: "foo-bar"},
 }
 
 type jstruct struct {
@@ -23,7 +23,7 @@ type jstruct struct {
 	Bar int    `json:"bar"`
 }
 
-func TestParse(t *T) {
+func TestParse(t *testing.T) {
 	s := String("str", "default", "Some string")
 	i := Int("int", 5, "Some int")
 	b := Bool("bool", false, "Some bool")
@@ -49,7 +49,7 @@ func TestParse(t *T) {
 	assert.Equal(t, jstruct{Foo: "FOO", Bar: 10}, j)
 }
 
-func TestParseDefault(t *T) {
+func TestParseDefault(t *testing.T) {
 	s := String("str", "default", "Some string")
 	i := Int("int", 5, "Some int")
 	b := Bool("bool", true, "Some bool")
@@ -66,7 +66,7 @@ func TestParseDefault(t *T) {
 	assert.Equal(t, jstruct{Foo: "foo", Bar: 5}, j)
 }
 
-func TestParseRequired(t *T) {
+func TestParseRequired(t *testing.T) {
 	s := RequiredString("str", "Some string")
 	i := RequiredInt("int", "Some int")
 	b := RequiredBool("bool", "Some bool")
@@ -89,7 +89,25 @@ func TestParseRequired(t *T) {
 	assert.Equal(t, jstruct{Foo: "FOO", Bar: 10}, j)
 }
 
-func TestDo(t *T) {
+func TestDuplicateJSON(t *testing.T) {
+	var j jstruct
+	JSON(&j, "json", jstruct{Foo: "foo", Bar: 5}, "Some json")
+	JSON(&j, "json", jstruct{Foo: "foo", Bar: 5}, "Some json")
+
+	Parse(SourceStub{
+		"json": `{"bar":10}`,
+	})
+	assert.Equal(t, jstruct{Foo: "", Bar: 10}, j)
+
+	assert.Panics(t, func() {
+		var j jstruct
+		JSON(&j, "json", jstruct{}, "Some json")
+		var k jstruct
+		JSON(&k, "json", jstruct{}, "Some json")
+	})
+}
+
+func TestDo(t *testing.T) {
 	Reset()
 
 	// we shouldn't need a lock but we do because the race detector is sensitive

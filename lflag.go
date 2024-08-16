@@ -1,7 +1,7 @@
 // Package lflag handles defining configuration providers as well as
 // coordinating initialization code.
 //
-// Configuration
+// # Configuration
 //
 // Parameters are defined much like they are in the standard flag package. A
 // pointer is returned from a method like String, which will then be filled once
@@ -13,7 +13,7 @@
 //	lflag.Parse(lflag.NewSourceCLI())
 //	db, err := NewDB(*addr, *poolSize)
 //
-// Sources
+// # Sources
 //
 // lflag supports multiple Sources, which are places from which configuration
 // information is obtained. For example, NewSourceCLI returns a Source which
@@ -22,21 +22,20 @@
 // together using the Sources type, which handles merging the different Sources
 // into a single one.
 //
-// Initialization
+// # Initialization
 //
 // In addition to handling configuration parameters lflag also manages
 // initialization based on their values, via the Do function. When lflag.Parse
 // is called, after all parameters have been filled in, all functions passed
 // into Do are called, in the order in which they were passed in.
 //
-// Miscellaneous
+// # Miscellaneous
 //
 // lflag handles a couple of other behaviors which are related to initialization
 // and runtime.
 //
 // Build information can be compiled into binaries using lflag using the build
 // variables like BuildCommit. See their doc string for how exactly to do that.
-//
 package lflag
 
 import (
@@ -349,7 +348,10 @@ func JSON(rcv interface{}, name string, value interface{}, usage string) {
 		Default:   string(jValue),
 		Usage:     usage,
 	}
-	newParam(p, rcv)
+	ptr := newParam(p, rcv)
+	if ptr != rcv {
+		panic(fmt.Sprintf("param named %q already exists and differs from this new one", p.Name))
+	}
 }
 
 // RequiredJSON is like JSON, but it has no default and must be set
